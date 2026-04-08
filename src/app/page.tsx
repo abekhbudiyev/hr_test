@@ -55,37 +55,15 @@ export default function Home() {
       tajriba: String(formData.get("tajriba") ?? ""),
     };
 
-    try {
-      const response = await fetch("/api/applications", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      const result = (await response.json()) as ArizaRecord | { error: string };
-      if (!response.ok || "error" in result) {
-        throw new Error("error" in result ? result.error : "So'rov yaratilmadi.");
-      }
-
-      startTransition(() => {
-        setApplications((current) => [result, ...current]);
-        setSelectedId(result.id);
-        setActiveTab("shaxsiy");
-      });
-      form.reset();
-      setShowForm(false);
-      setFeedback("Yangi so'rov yaratildi.");
-    } catch {
-      const fallback = createCandidateRecord(payload);
-      startTransition(() => {
-        setApplications((current) => [fallback, ...current]);
-        setSelectedId(fallback.id);
-        setActiveTab("shaxsiy");
-      });
-      form.reset();
-      setShowForm(false);
-      setFeedback("So'rov lokal rejimda yaratildi.");
-    }
+    const result = createCandidateRecord(payload);
+    startTransition(() => {
+      setApplications((current) => [result, ...current]);
+      setSelectedId(result.id);
+      setActiveTab("shaxsiy");
+    });
+    form.reset();
+    setShowForm(false);
+    setFeedback("Yangi so'rov yaratildi.");
   }
 
   return (
